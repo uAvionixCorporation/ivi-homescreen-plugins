@@ -62,7 +62,6 @@ SkyplayRenderSurface::SkyplayRenderSurface(int32_t id,
       removeListener_(removeListener),
       flutterAssetsPath_(std::move(assetDirectory))
 {
-#if 0
   SPDLOG_TRACE("++SkyplayRenderSurface::SkyplayRenderSurface");
   auto& codec = flutter::StandardMessageCodec::GetInstance();
   const auto decoded = codec.DecodeMessage(params.data(), params.size());
@@ -108,15 +107,21 @@ SkyplayRenderSurface::SkyplayRenderSurface(int32_t id,
     spdlog::error("[SkyplayRenderViewPlugin] libskyplay_render.so missing");
     return;
   }
-  if (LibSkyplayRender::kExpectedSurfaceApiVersion !=
-      LibSkyplayRender->SurfaceGetInterfaceVersion()) {
-    spdlog::error("[SkyplayRenderViewPlugin] unexpected interface version: {}",
-                  LibSkyplayRender->SurfaceGetInterfaceVersion());
-    return;
-  }
+
+//  if (LibSkyplayRender::kExpectedSurfaceApiVersion !=
+//      LibSkyplayRender->SurfaceGetInterfaceVersion()) {
+//    spdlog::error("[SkyplayRenderViewPlugin] unexpected interface version: {}",
+//                  LibSkyplayRender->SurfaceGetInterfaceVersion());
+//    return;
+//  }
 
   /// Setup Native Window pointers
   display_ = view_->GetDisplay()->GetDisplay();
+  surface_ = view_->GetWindow()->GetBaseSurface();
+
+  printf("Launch OGRE Renderer\n");
+  LibSkyplayRender->initialize(display_, surface_);
+#if 0
   auto compositor = view_->GetDisplay()->GetCompositor();
   surface_ = wl_compositor_create_surface(compositor);
 
@@ -148,10 +153,9 @@ SkyplayRenderSurface::SkyplayRenderSurface(int32_t id,
                                                 parent_surface_);
 
   wl_subsurface_set_desync(subsurface_);
-
+#endif
   addListener(platformViewsContext_, id, &platform_view_listener_, this);
   SPDLOG_TRACE("--SkyplayRenderSurface::SkyplayRenderSurface");
-#endif
 }
 
 SkyplayRenderSurface::~SkyplayRenderSurface() {

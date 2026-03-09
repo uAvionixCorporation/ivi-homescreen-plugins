@@ -54,8 +54,6 @@ struct LibSkyplayRenderExports {
   void* (*getTerrainEglImage)() = nullptr;
   void* (*getMapEglImage)() = nullptr;
   void  (*renderFrame)() = nullptr;
-  int   (*getTerrainTextureID)() = nullptr;
-  int   (*getMapTextureID)() = nullptr;
 };
 
 class LibSkyplayRender {

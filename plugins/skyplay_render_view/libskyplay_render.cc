@@ -29,8 +29,6 @@ LibSkyplayRenderExports::LibSkyplayRenderExports(void* lib) {
     PluginGetFuncAddress(lib, "initialize", &initialize);
     PluginGetFuncAddress(lib, "getTerrainEglImage", &getTerrainEglImage);
     PluginGetFuncAddress(lib, "getMapEglImage", &getMapEglImage);
-    PluginGetFuncAddress(lib, "get_terrain_texture_id", &getTerrainTextureID);
-    PluginGetFuncAddress(lib, "get_map_texture_id", &getMapTextureID);
     PluginGetFuncAddress(lib, "renderFrame", &renderFrame);
   }
 }
