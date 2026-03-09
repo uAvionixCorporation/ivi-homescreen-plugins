@@ -194,6 +194,15 @@ void PluginsAoiPlatformViewCreate(
     result->Success(flutter::EncodableValue(id));
   } else
 #endif
+#if ENABLE_PLUGIN_SKYPLAY_RENDER_VIEW
+      if (viewType == "views/skyplay-render-view") {
+          SkyplayRenderViewPluginCApiRegisterWithRegistrar(
+              registrar, id, viewType, direction, top, left, width, height, params,
+              flutter_asset_directory, engine, addListener, removeListener,
+              platform_view_context);
+          result->Success(flutter::EncodableValue(id));
+      } else
+#endif
   {
     (void)flutter_asset_directory;
     (void)addListener;
