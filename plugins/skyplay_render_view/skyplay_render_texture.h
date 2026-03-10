@@ -23,8 +23,6 @@ public:
         flutter::PluginRegistrar* registrar,
         FlutterDesktopEngineRef engine);
 
-    const FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptor(size_t width, size_t height);
-
     ~SkyplayRenderTexture() override;
 
     // Disallow copy and assign.
@@ -38,10 +36,15 @@ private:
         const flutter::MethodCall<flutter::EncodableValue>& method_call,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-    std::unique_ptr<flutter::TextureVariant> texture_variant;
-    int64_t flutter_texture_id = 0;
-    GLuint gl_texture_id = 0;
-    FlutterDesktopGpuSurfaceDescriptor surface_descriptor_ = {};
+    std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;
+    int64_t flutterTextureId = 0;
+    GLuint glTextureId = 0;
+    FlutterDesktopGpuSurfaceDescriptor surfaceDescriptor = {};
+    EGLImage eglImage;
+
+    typedef void (*PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)(GLenum target, void * image);
+
+    PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES;
 };
 
 }  // namespace skyplay_render_view_plugin

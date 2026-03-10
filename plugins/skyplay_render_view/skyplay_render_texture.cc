@@ -34,27 +34,74 @@ SkyplayRenderTexture::SkyplayRenderTexture(
         }
     );
 
-    auto texture =
-        flutter::GpuSurfaceTexture(
+    flutter::TextureRegistrar* texture_registrar_ =
+        registrar->texture_registrar();
+
+    texture_registrar_->TextureMakeCurrent();
+
+    EGLContext current_context = eglGetCurrentContext();
+    printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Context State: ");
+    if (current_context != EGL_NO_CONTEXT) {
+        printf("VALID\n");
+    } else {
+        printf("INVALID\n");
+    }
+
+    glGenTextures(1, &glTextureId);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glBindTexture(GL_TEXTURE_2D, glTextureId);
+    printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Texture Initialized: ID %u\n", glTextureId);
+
+    glEGLImageTargetTexture2DOES =
+        (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    if (glEGLImageTargetTexture2DOES) {
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
+    }
+    else
+    {
+        printf(">>>>>>>>>>>>>>>>>>>> Error <<<<<<<<<<<<<<<<<<<<\n");
+    }
+
+    surfaceDescriptor = {
+        .struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor),
+        .handle = &glTextureId,
+        .width = 1920,
+        .height = 1080,
+        .visible_width = 1920,
+        .visible_height = 1080,
+        .format = kFlutterDesktopPixelFormatRGBA8888,
+        .release_callback = [](void* /* release_context */) {},
+        .release_context = this
+    };
+
+    gpuSurfaceTexture =
+        std::make_unique<flutter::GpuSurfaceTexture>(
             kFlutterDesktopGpuSurfaceTypeGlTexture2D,
-            [this](size_t width, size_t height)
+            [&](size_t width, size_t height) -> const FlutterDesktopGpuSurfaceDescriptor*
             {
-                // This is the callback. It only runs when Flutter wants to DRAW.
-                return ObtainDescriptor(width, height);
+                (void)width;
+                (void)height;
+                return &surfaceDescriptor;
             }
         );
 
-    // Create the texture proxy
-    texture_variant = std::make_unique<flutter::TextureVariant>(texture);
+    flutter::TextureVariant textureVariant = *gpuSurfaceTexture;
 
-    flutter_texture_id = registrar->texture_registrar()->RegisterTexture(texture_variant.get());
+    flutterTextureId = registrar->texture_registrar()->RegisterTexture(&textureVariant);
 
-    //FlutterDesktopEngineState* state;
     auto display = engine->view_controller->view->GetDisplay()->GetDisplay();
     auto surface = engine->view_controller->view->GetWindow()->GetBaseSurface();
 
     printf("Launch OGRE Renderer\n");
     LibSkyplayRender->initialize(display, surface);
+
+    printf("flutter texture ID: %ld\n", flutterTextureId);
 }
 
 void SkyplayRenderTexture::HandleMethodCall(
@@ -62,23 +109,6 @@ void SkyplayRenderTexture::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<>> result)
 {
     if (method_call.method_name() == "create") {
-
-#if 0
-        auto texture_registrar = registrar->texture_registrar();
-
-        auto texture_variant = std::make_unique<flutter::TextureVariant>(
-            flutter::GpuSurfaceTexture(
-                kFlutterDesktopGpuSurfaceTypeGlTexture2d,
-                [this](size_t width, size_t height) -> const FlutterDesktopGpuSurfaceDescriptor*
-                {
-                    // Your logic to return the EGL/GL texture handle
-                    return this->GetSurfaceDescriptor(width, height);
-                }
-            )
-       );
-
-        int64_t texture_id = texture_registrar->RegisterTexture(texture_variant.get());
-#endif
         int64_t texture_id = 0;
         flutter::EncodableMap response;
         response[flutter::EncodableValue("textureId")] = flutter::EncodableValue(texture_id);
@@ -87,15 +117,5 @@ void SkyplayRenderTexture::HandleMethodCall(
 }
 
 SkyplayRenderTexture::~SkyplayRenderTexture() = default;
-
-const FlutterDesktopGpuSurfaceDescriptor* SkyplayRenderTexture::ObtainDescriptor(size_t width, size_t height)
-{
-    surface_descriptor_.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
-    surface_descriptor_.handle = nullptr;
-    surface_descriptor_.width = width;
-    surface_descriptor_.height = height;
-    surface_descriptor_.format = kFlutterDesktopPixelFormatBGRA8888; // Standard for D3D11
-    return &surface_descriptor_;
-}
 
 }  // namespace skyplay_render_view_plugin
