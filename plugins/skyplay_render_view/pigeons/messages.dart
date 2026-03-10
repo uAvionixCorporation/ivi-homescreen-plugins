@@ -14,4 +14,5 @@ abstract class SkyplayApi {
   void initialize();
   int getMapTextureHandle();
   int getTerrainTextureHandle();
+  void renderFrame();
 }

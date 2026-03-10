@@ -120,4 +120,17 @@ skyplay_render_view::ErrorOr<int64_t> SkyplayRenderTexture::GetTerrainTextureHan
     return flutterTextureId[1];
 }
 
+std::optional<skyplay_render_view::FlutterError> SkyplayRenderTexture::RenderFrame()
+{
+    flutter::TextureRegistrar* textureRegistrar =
+        _registrar->texture_registrar();
+
+    LibSkyplayRender->renderFrame();
+
+    textureRegistrar->MarkTextureFrameAvailable(glTextureId[0]);
+    textureRegistrar->MarkTextureFrameAvailable(glTextureId[1]);
+
+    return std::nullopt;
+}
+
 }  // namespace skyplay_render_view_plugin

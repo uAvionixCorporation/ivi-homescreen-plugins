@@ -20,32 +20,6 @@
 
 namespace skyplay_render_view_plugin {
 
-typedef void (*LoggerFunction)(int level,
-                               const char* context,
-                               const char* message);
-typedef const void* (*GlLoaderFunction)(void* userdata, const char* procname);
-
-typedef struct {
-  void* dpy;
-  void* context;
-  uint32_t framebufferId;
-  const char* access_token;
-  int width;
-  int height;
-  const char* asset_path;
-  const char* cache_folder;
-  const char* misc_folder;
-  LoggerFunction pfn_log;
-  GlLoaderFunction pfn_gl_loader;
-  const void* native_window;
-#if HEADLESS_BACKEND_EGL
-  void* contextHeadless;
-  unsigned char* buffer;
-#endif
-} SkyplayRenderConfig;
-
-struct skyplay_render_Context;
-
 struct LibSkyplayRenderExports {
   LibSkyplayRenderExports() = default;
   explicit LibSkyplayRenderExports(void* lib);

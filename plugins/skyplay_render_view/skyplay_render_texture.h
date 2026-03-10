@@ -33,6 +33,7 @@ public:
     std::optional<skyplay_render_view::FlutterError> Initialize() override;
     skyplay_render_view::ErrorOr<int64_t> GetMapTextureHandle() override;
     skyplay_render_view::ErrorOr<int64_t> GetTerrainTextureHandle() override;
+    std::optional<skyplay_render_view::FlutterError> RenderFrame() override;
 
 private:
     std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture[2];

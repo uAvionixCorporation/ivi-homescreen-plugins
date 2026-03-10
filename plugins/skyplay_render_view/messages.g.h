@@ -85,6 +85,7 @@ class SkyplayApi {
   virtual std::optional<FlutterError> Initialize() = 0;
   virtual ErrorOr<int64_t> GetMapTextureHandle() = 0;
   virtual ErrorOr<int64_t> GetTerrainTextureHandle() = 0;
+  virtual std::optional<FlutterError> RenderFrame() = 0;
 
   // The codec used by SkyplayApi.
   static const flutter::StandardMessageCodec& GetCodec();
