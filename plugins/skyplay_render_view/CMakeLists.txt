@@ -18,9 +18,9 @@ pkg_check_modules(WAYLAND_EGL REQUIRED IMPORTED_TARGET wayland-egl)
 
 add_library(plugin_skyplay_render_view STATIC
         skyplay_render_view_plugin_c_api.cc
-        skyplay_render_surface.cc
         skyplay_render_texture.cc
         libskyplay_render.cc
+        messages.g.cc
 )
 
 target_include_directories(plugin_skyplay_render_view PRIVATE include ${PROJECT_BINARY_DIR})

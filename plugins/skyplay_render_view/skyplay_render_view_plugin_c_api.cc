@@ -18,32 +18,7 @@
 
 #include <flutter/plugin_registrar.h>
 
-#include "skyplay_render_surface.h"
 #include "skyplay_render_texture.h"
-
-void SkyplayRenderViewPluginCApiRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar,
-    const int32_t id,
-    std::string viewType,
-    const int32_t direction,
-    const double top,
-    const double left,
-    const double width,
-    const double height,
-    const std::vector<uint8_t>& params,
-    std::string assetDirectory,
-    FlutterDesktopEngineRef engine,
-    const PlatformViewAddListener add_listener,
-    const PlatformViewRemoveListener remove_listener,
-    void* platform_views_context)
-{
-  skyplay_render_view_plugin::SkyplayRenderSurface::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-          ->GetRegistrar<flutter::PluginRegistrar>(registrar),
-      id, std::move(viewType), direction, top, left, width, height, params,
-      std::move(assetDirectory), engine, add_listener, remove_listener,
-      platform_views_context);
-}
 
 void SkyplayRenderViewPluginTextureCApiRegisterWithRegistrar(
     FlutterDesktopPluginRegistrar* registrar,
