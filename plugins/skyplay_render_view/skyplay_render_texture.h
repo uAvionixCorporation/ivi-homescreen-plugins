@@ -31,16 +31,19 @@ public:
     SkyplayRenderTexture& operator=(const SkyplayRenderTexture&) = delete;
 
     std::optional<skyplay_render_view::FlutterError> Initialize() override;
-    skyplay_render_view::ErrorOr<int64_t> GetTextureHandle() override;
+    skyplay_render_view::ErrorOr<int64_t> GetMapTextureHandle() override;
+    skyplay_render_view::ErrorOr<int64_t> GetTerrainTextureHandle() override;
 
 private:
-    std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;
-    int64_t flutterTextureId = 0;
-    GLuint glTextureId = 0;
-    FlutterDesktopGpuSurfaceDescriptor surfaceDescriptor = {};
-    EGLImage eglImage;
+    std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture[2];
+    int64_t flutterTextureId[2];
+    GLuint glTextureId[2];
+    FlutterDesktopGpuSurfaceDescriptor surfaceDescriptor[2];
+    EGLImage eglImage[2];
     flutter::PluginRegistrar* _registrar = nullptr;
-    FlutterDesktopEngineRef _engine;
+    FlutterDesktopEngineRef _engine = nullptr;
+
+    void initializeInstance(uint8_t instance);
 
     typedef void (*PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)(GLenum target, void * image);
 
