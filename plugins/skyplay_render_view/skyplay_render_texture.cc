@@ -8,119 +8,94 @@ namespace skyplay_render_view_plugin {
 [[maybe_unused]] static constexpr int kExpectedRenderApiVersion = 0x00010002;
 
 void SkyplayRenderTexture::RegisterWithRegistrar(
-    flutter::PluginRegistrar* registrar)
+    flutter::PluginRegistrar* registrar,
+    FlutterDesktopEngineRef engine)
 {
-  if (!LibSkyplayRender::IsPresent()) {
-    spdlog::error("[SkyplayRenderViewPlugin] libskyplay_render.so missing");
-  }
+    if (!LibSkyplayRender::IsPresent()) {
+        spdlog::error("[SkyplayRenderViewPlugin] libskyplay_render.so missing");
+    }
 
-  // TODO
-#if 0
-  if (LibSkyplayRender::kExpectedTextureApiVersion !=
-      LibSkyplayRender->TextureGetInterfaceVersion()) {
-    spdlog::error("[SkyplayRenderViewPlugin] unexpected interface version: {}",
-                  LibSkyplayRender->TextureGetInterfaceVersion());
-  }
-#endif
-  auto plugin = std::make_unique<SkyplayRenderTexture>(registrar);
-  registrar->AddPlugin(std::move(plugin));
+    auto plugin = std::make_unique<SkyplayRenderTexture>(registrar, engine);
+    registrar->AddPlugin(std::move(plugin));
 }
 
-SkyplayRenderTexture::SkyplayRenderTexture(flutter::PluginRegistrar* registrar) {
-  channel_ = std::make_unique<flutter::MethodChannel<>>(
-      registrar->messenger(), "skyplay_render_view",
-      &flutter::StandardMethodCodec::GetInstance());
-  channel_->SetMethodCallHandler(
-      [](const flutter::MethodCall<>& call,
-         std::unique_ptr<flutter::MethodResult<>> result) {
-        HandleMethodCall(call, std::move(result));
-      });
+SkyplayRenderTexture::SkyplayRenderTexture(
+    flutter::PluginRegistrar* registrar,
+    FlutterDesktopEngineRef engine)
+{
+    channel_ = std::make_unique<flutter::MethodChannel<>>(
+        registrar->messenger(), "skyplay_render_view",
+        &flutter::StandardMethodCodec::GetInstance());
+
+    channel_->SetMethodCallHandler(
+        [](const flutter::MethodCall<>& call, std::unique_ptr<flutter::MethodResult<>> result)
+        {
+            HandleMethodCall(call, std::move(result));
+        }
+    );
+
+    auto texture =
+        flutter::GpuSurfaceTexture(
+            kFlutterDesktopGpuSurfaceTypeGlTexture2D,
+            [this](size_t width, size_t height)
+            {
+                // This is the callback. It only runs when Flutter wants to DRAW.
+                return ObtainDescriptor(width, height);
+            }
+        );
+
+    // Create the texture proxy
+    texture_variant = std::make_unique<flutter::TextureVariant>(texture);
+
+    flutter_texture_id = registrar->texture_registrar()->RegisterTexture(texture_variant.get());
+
+    //FlutterDesktopEngineState* state;
+    auto display = engine->view_controller->view->GetDisplay()->GetDisplay();
+    auto surface = engine->view_controller->view->GetWindow()->GetBaseSurface();
+
+    printf("Launch OGRE Renderer\n");
+    LibSkyplayRender->initialize(display, surface);
 }
 
 void SkyplayRenderTexture::HandleMethodCall(
     const flutter::MethodCall<>& method_call,
-    std::unique_ptr<flutter::MethodResult<>> result) {
-  if (method_call.method_name() == "create") {
-    std::string access_token;
-    std::string module;
-    bool map_flutter_assets{};
-    std::string asset_path;
-    std::string cache_folder;
-    std::string misc_folder;
-    int interface_version = 0;
+    std::unique_ptr<flutter::MethodResult<>> result)
+{
+    if (method_call.method_name() == "create") {
 
-    const auto& args =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
+#if 0
+        auto texture_registrar = registrar->texture_registrar();
 
-    for (const auto& [fst, snd] : *args) {
-      if (const auto& key = std::get<std::string>(fst); key == "access_token") {
-        if (std::holds_alternative<std::string>(snd)) {
-          access_token = std::get<std::string>(snd);
-        }
-      } else if (key == "map_flutter_assets") {
-        if (std::holds_alternative<bool>(snd)) {
-          map_flutter_assets = std::get<bool>(snd);
-        }
-      } else if (key == "asset_path") {
-        if (std::holds_alternative<std::string>(snd)) {
-          asset_path = std::get<std::string>(snd);
-        }
-      } else if (key == "cache_folder") {
-        if (std::holds_alternative<std::string>(snd)) {
-          cache_folder = std::get<std::string>(snd);
-        }
-      } else if (key == "misc_folder") {
-        if (std::holds_alternative<std::string>(snd)) {
-          misc_folder = std::get<std::string>(snd);
-        }
-      } else if (key == "intf_ver") {
-        if (std::holds_alternative<int>(snd)) {
-          interface_version = std::get<int>(snd);
-        }
-      }
+        auto texture_variant = std::make_unique<flutter::TextureVariant>(
+            flutter::GpuSurfaceTexture(
+                kFlutterDesktopGpuSurfaceTypeGlTexture2d,
+                [this](size_t width, size_t height) -> const FlutterDesktopGpuSurfaceDescriptor*
+                {
+                    // Your logic to return the EGL/GL texture handle
+                    return this->GetSurfaceDescriptor(width, height);
+                }
+            )
+       );
+
+        int64_t texture_id = texture_registrar->RegisterTexture(texture_variant.get());
+#endif
+        int64_t texture_id = 0;
+        flutter::EncodableMap response;
+        response[flutter::EncodableValue("textureId")] = flutter::EncodableValue(texture_id);
+        result->Success(flutter::EncodableValue(response));
     }
-    auto res = Create(access_token, map_flutter_assets, asset_path,
-                      cache_folder, misc_folder, interface_version);
-    if (res.has_error()) {
-      result->Error(res.error().message(), res.error().code(),
-                    res.error().details());
-    } else {
-      result->Success(flutter::EncodableValue(res.value()));
-    }
-  } else {
-    result->NotImplemented();
-  }
 }
 
 SkyplayRenderTexture::~SkyplayRenderTexture() = default;
 
-ErrorOr<flutter::EncodableMap> SkyplayRenderTexture::Create(
-    const std::string& access_token,
-    const bool map_flutter_assets,
-    const std::string& asset_path,
-    const std::string& cache_folder,
-    const std::string& misc_folder,
-    int /* interface_version */) {
-  SkyplayRenderConfig config{};
-  config.dpy = nullptr;
-  config.context = nullptr;
-  config.framebufferId = 0;
-  config.access_token = access_token.c_str();
-  config.width = 640;
-  config.height = 480;
-  if (map_flutter_assets) {
-    config.asset_path = asset_path.c_str();
-  }
-  config.cache_folder = cache_folder.c_str();
-  config.misc_folder = misc_folder.c_str();
-  config.pfn_log = nullptr;
-  config.pfn_gl_loader = nullptr;
-  config.native_window = nullptr;
-
-  // TODO
-  //[[maybe_unused]] auto ctx = LibSkyplayRender->TextureInitialize2(&config);
-
-  return ErrorOr(flutter::EncodableMap{});
+const FlutterDesktopGpuSurfaceDescriptor* SkyplayRenderTexture::ObtainDescriptor(size_t width, size_t height)
+{
+    surface_descriptor_.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
+    surface_descriptor_.handle = nullptr;
+    surface_descriptor_.width = width;
+    surface_descriptor_.height = height;
+    surface_descriptor_.format = kFlutterDesktopPixelFormatBGRA8888; // Standard for D3D11
+    return &surface_descriptor_;
 }
 
 }  // namespace skyplay_render_view_plugin

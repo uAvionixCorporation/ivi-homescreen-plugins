@@ -46,9 +46,11 @@ void SkyplayRenderViewPluginCApiRegisterWithRegistrar(
 }
 
 void SkyplayRenderViewPluginTextureCApiRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrar* registrar)
+    FlutterDesktopPluginRegistrar* registrar,
+    FlutterDesktopEngineRef engine)
 {
-  skyplay_render_view_plugin::SkyplayRenderTexture::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-          ->GetRegistrar<flutter::PluginRegistrar>(registrar));
+    skyplay_render_view_plugin::SkyplayRenderTexture::RegisterWithRegistrar(
+        flutter::PluginRegistrarManager::GetInstance()
+            ->GetRegistrar<flutter::PluginRegistrar>(registrar),
+        engine);
 }

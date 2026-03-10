@@ -51,7 +51,8 @@ FLUTTER_PLUGIN_EXPORT void SkyplayRenderViewPluginCApiRegisterWithRegistrar(
     void* platform_views_context);
 
 FLUTTER_PLUGIN_EXPORT void SkyplayRenderViewPluginTextureCApiRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrar* registrar);
+    FlutterDesktopPluginRegistrar* registrar,
+    FlutterDesktopEngineRef engine);
 
 #if defined(__cplusplus)
 }  // extern "C"

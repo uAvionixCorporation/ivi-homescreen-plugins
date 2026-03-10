@@ -109,7 +109,8 @@ void PluginsApiRegisterPlugins(FlutterDesktopEngineRef engine) {
 #endif
 #if ENABLE_PLUGIN_SKYPLAY_RENDER_VIEW
   SkyplayRenderViewPluginTextureCApiRegisterWithRegistrar(
-      FlutterDesktopGetPluginRegistrar(engine, ""));
+      FlutterDesktopGetPluginRegistrar(engine, ""),
+      engine);
 #endif
 }
 

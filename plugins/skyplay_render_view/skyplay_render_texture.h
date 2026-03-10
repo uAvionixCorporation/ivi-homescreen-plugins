@@ -3,35 +3,45 @@
 #include <flutter/event_channel.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
+#include "flutter_desktop_engine_state.h"
 
 #include "skyplay_render_error.h"
 #include "wayland/display.h"
 
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
+
 namespace skyplay_render_view_plugin {
+
 class SkyplayRenderTexture final : public flutter::Plugin {
- public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrar* registrar);
+public:
+    static void RegisterWithRegistrar(
+        flutter::PluginRegistrar* registrar,
+        FlutterDesktopEngineRef engine);
 
-  explicit SkyplayRenderTexture(flutter::PluginRegistrar* registrar);
+    explicit SkyplayRenderTexture(
+        flutter::PluginRegistrar* registrar,
+        FlutterDesktopEngineRef engine);
 
-  ~SkyplayRenderTexture() override;
+    const FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptor(size_t width, size_t height);
 
-  static ErrorOr<flutter::EncodableMap> Create(const std::string& access_token,
-                                               bool map_flutter_assets,
-                                               const std::string& asset_path,
-                                               const std::string& cache_folder,
-                                               const std::string& misc_folder,
-                                               int interface_version);
+    ~SkyplayRenderTexture() override;
 
-  // Disallow copy and assign.
-  SkyplayRenderTexture(const SkyplayRenderTexture&) = delete;
-  SkyplayRenderTexture& operator=(const SkyplayRenderTexture&) = delete;
+    // Disallow copy and assign.
+    SkyplayRenderTexture(const SkyplayRenderTexture&) = delete;
+    SkyplayRenderTexture& operator=(const SkyplayRenderTexture&) = delete;
 
- private:
-  std::unique_ptr<flutter::MethodChannel<>> channel_{};
+private:
+    std::unique_ptr<flutter::MethodChannel<>> channel_{};
 
-  static void HandleMethodCall(
-      const flutter::MethodCall<flutter::EncodableValue>& method_call,
-      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    static void HandleMethodCall(
+        const flutter::MethodCall<flutter::EncodableValue>& method_call,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+    std::unique_ptr<flutter::TextureVariant> texture_variant;
+    int64_t flutter_texture_id = 0;
+    GLuint gl_texture_id = 0;
+    FlutterDesktopGpuSurfaceDescriptor surface_descriptor_ = {};
 };
+
 }  // namespace skyplay_render_view_plugin
