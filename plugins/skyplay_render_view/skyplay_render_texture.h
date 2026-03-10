@@ -31,10 +31,9 @@ public:
     SkyplayRenderTexture& operator=(const SkyplayRenderTexture&) = delete;
 
     std::optional<skyplay_render_view::FlutterError> Initialize() override;
+    skyplay_render_view::ErrorOr<int64_t> GetTextureHandle() override;
 
 private:
-    std::unique_ptr<flutter::MethodChannel<>> channel_{};
-
     std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;
     int64_t flutterTextureId = 0;
     GLuint glTextureId = 0;

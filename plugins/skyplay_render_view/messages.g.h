@@ -83,6 +83,7 @@ class SkyplayApi {
   SkyplayApi& operator=(const SkyplayApi&) = delete;
   virtual ~SkyplayApi() {}
   virtual std::optional<FlutterError> Initialize() = 0;
+  virtual ErrorOr<int64_t> GetTextureHandle() = 0;
 
   // The codec used by SkyplayApi.
   static const flutter::StandardMessageCodec& GetCodec();

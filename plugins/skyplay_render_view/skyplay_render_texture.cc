@@ -35,6 +35,16 @@ std::optional<skyplay_render_view::FlutterError> SkyplayRenderTexture::Initializ
     flutter::TextureRegistrar* textureRegistrar =
         _registrar->texture_registrar();
 
+    auto display = _engine->view_controller->view->GetDisplay()->GetDisplay();
+    auto surface = _engine->view_controller->view->GetWindow()->GetBaseSurface();
+
+    printf("Launch OGRE Renderer\n");
+    LibSkyplayRender->initialize(display, surface);
+    LibSkyplayRender->renderFrame();
+
+    eglImage = LibSkyplayRender->getMapEglImage();
+    //printf("EGL Image: %d\n", eglImage);
+
     textureRegistrar->TextureMakeCurrent();
 
     glGenTextures(1, &glTextureId);
@@ -89,15 +99,14 @@ std::optional<skyplay_render_view::FlutterError> SkyplayRenderTexture::Initializ
     flutterTextureId = textureRegistrar->RegisterTexture(&textureVariant);
     textureRegistrar->MarkTextureFrameAvailable(glTextureId);
 
-    auto display = _engine->view_controller->view->GetDisplay()->GetDisplay();
-    auto surface = _engine->view_controller->view->GetWindow()->GetBaseSurface();
-
-    printf("Launch OGRE Renderer\n");
-    LibSkyplayRender->initialize(display, surface);
-
-    printf("flutter texture ID: %ld\n", flutterTextureId);
+    //printf("flutter texture ID: %ld\n", flutterTextureId);
 
     return std::nullopt;
+}
+
+skyplay_render_view::ErrorOr<int64_t> SkyplayRenderTexture::GetTextureHandle()
+{
+    return flutterTextureId;
 }
 
 }  // namespace skyplay_render_view_plugin
