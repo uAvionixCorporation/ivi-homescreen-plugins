@@ -19,44 +19,50 @@
 #include <plugins/common/common.h>
 
 #include <dlfcn.h>
+#include <filesystem>
+#include <cstdio>
 
 namespace skyplay_render_view_plugin {
 
+namespace fs = std::filesystem;
+
 constexpr char kSkyplayRenderSoName[] = "/home/kyle/Documents/skyplay-software/cmake-build-debug/libSkyplay3DEngine.so";
 
-LibSkyplayRenderExports::LibSkyplayRenderExports(void* lib) {
-  if (lib != nullptr) {
-    PluginGetFuncAddress(lib, "initialize", &initialize);
-    PluginGetFuncAddress(lib, "getTerrainEglImage", &getTerrainEglImage);
-    PluginGetFuncAddress(lib, "getMapEglImage", &getMapEglImage);
-    PluginGetFuncAddress(lib, "renderFrame", &renderFrame);
-  }
+LibSkyplayRenderExports::LibSkyplayRenderExports(void* lib)
+{
+    if (lib != nullptr) {
+        PluginGetFuncAddress(lib, "initialize", &initialize);
+        PluginGetFuncAddress(lib, "getTerrainEglImage", &getTerrainEglImage);
+        PluginGetFuncAddress(lib, "getMapEglImage", &getMapEglImage);
+        PluginGetFuncAddress(lib, "renderFrame", &renderFrame);
+    }
 }
 
-LibSkyplayRenderExports* LibSkyplayRender::operator->() const {
-  return loadExports();
+LibSkyplayRenderExports* LibSkyplayRender::operator->() const
+{
+    return loadExports();
 }
 
 LibSkyplayRenderExports* LibSkyplayRender::loadExports() {
-  static LibSkyplayRenderExports exports = [] {
-    void* lib;
+    static LibSkyplayRenderExports* exports_ptr = []() -> LibSkyplayRenderExports* {
+        if (!fs::exists(kSkyplayRenderSoName)) {
+            spdlog::error("[LibSkyplayRender] Error: Shared library not found at {}", kSkyplayRenderSoName);
+            return nullptr;
+        }
 
-//    if (PluginGetProcAddress(
-//            RTLD_DEFAULT,
-//            "comp_surf_initialize"))  // Search the global scope
-//                                      // for pre-loaded library.
-//    {
-//      lib = RTLD_DEFAULT;
-//    } else {
-      lib = dlopen(kSkyplayRenderSoName, RTLD_LAZY | RTLD_LOCAL);
-//    }
+        void* lib = dlopen(kSkyplayRenderSoName, RTLD_LAZY | RTLD_LOCAL);
+        if (!lib) {
+            spdlog::error("[LibSkyplayRender] Error: Failed to load {}: {}", kSkyplayRenderSoName, dlerror());
+            return nullptr;
+        }
 
-    return LibSkyplayRenderExports(lib);
-  }();
+        spdlog::error("[LibSkyplayRender] Successfully loaded {}", kSkyplayRenderSoName);
 
-  // TODO
-  //return exports.SurfaceInitialize ? &exports : nullptr;
-  return &exports;
+        static LibSkyplayRenderExports exports(lib);
+        return &exports;
+    }();
+
+    return exports_ptr;
 }
 
 class LibSkyplayRender LibSkyplayRender;

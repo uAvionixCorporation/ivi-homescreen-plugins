@@ -20,24 +20,26 @@
 
 namespace skyplay_render_view_plugin {
 
-struct LibSkyplayRenderExports {
-  LibSkyplayRenderExports() = default;
-  explicit LibSkyplayRenderExports(void* lib);
+struct LibSkyplayRenderExports
+{
+    LibSkyplayRenderExports() = default;
+    explicit LibSkyplayRenderExports(void* lib);
 
-  void  (*initialize)(void *, void*) = nullptr;
-  void* (*getTerrainEglImage)() = nullptr;
-  void* (*getMapEglImage)() = nullptr;
-  void  (*renderFrame)() = nullptr;
+    void  (*initialize)(void *, void*) = nullptr;
+    void* (*getTerrainEglImage)() = nullptr;
+    void* (*getMapEglImage)() = nullptr;
+    void  (*renderFrame)() = nullptr;
 };
 
-class LibSkyplayRender {
- public:
-  static bool IsPresent() { return loadExports() != nullptr; }
+class LibSkyplayRender
+{
+public:
+    static bool IsPresent() { return loadExports() != nullptr; }
 
-  LibSkyplayRenderExports* operator->() const;
+    LibSkyplayRenderExports* operator->() const;
 
- private:
-  static LibSkyplayRenderExports* loadExports();
+private:
+    static LibSkyplayRenderExports* loadExports();
 };
 
 extern LibSkyplayRender LibSkyplayRender;
