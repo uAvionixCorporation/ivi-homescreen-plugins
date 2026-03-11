@@ -82,10 +82,10 @@ void SkyplayRenderTexture::initializeInstance(uint8_t instance)
     surfaceDescriptor[instance] = {
         .struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor),
         .handle = &glTextureId[instance],
-        .width = static_cast<size_t>(800),
-        .height = static_cast<size_t>(480),
-        .visible_width = static_cast<size_t>(800),
-        .visible_height = static_cast<size_t>(480),
+        .width = static_cast<size_t>(1920),
+        .height = static_cast<size_t>(1080),
+        .visible_width = static_cast<size_t>(1920),
+        .visible_height = static_cast<size_t>(1080),
         .format = kFlutterDesktopPixelFormatRGBA8888,
         .release_callback = [](void* /* release_context */) {},
         .release_context = this
