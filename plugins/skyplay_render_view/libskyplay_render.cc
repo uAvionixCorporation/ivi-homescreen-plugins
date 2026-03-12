@@ -26,7 +26,7 @@ namespace skyplay_render_view_plugin {
 
 namespace fs = std::filesystem;
 
-constexpr char kSkyplayRenderSoName[] = "/home/kyle/Documents/skyplay-software/cmake-build-debug/libSkyplay3DEngine.so";
+constexpr char kSkyplayRenderSoName[] = "libSkyplay3DEngine.so";
 
 LibSkyplayRenderExports::LibSkyplayRenderExports(void* lib)
 {
