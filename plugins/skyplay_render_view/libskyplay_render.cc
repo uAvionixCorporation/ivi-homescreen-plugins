@@ -19,12 +19,9 @@
 #include <plugins/common/common.h>
 
 #include <dlfcn.h>
-#include <filesystem>
 #include <cstdio>
 
 namespace skyplay_render_view_plugin {
-
-namespace fs = std::filesystem;
 
 constexpr char kSkyplayRenderSoName[] = "libSkyplay3DEngine.so";
 
@@ -45,10 +42,6 @@ LibSkyplayRenderExports* LibSkyplayRender::operator->() const
 
 LibSkyplayRenderExports* LibSkyplayRender::loadExports() {
     static LibSkyplayRenderExports* exports_ptr = []() -> LibSkyplayRenderExports* {
-        if (!fs::exists(kSkyplayRenderSoName)) {
-            spdlog::error("[LibSkyplayRender] Error: Shared library not found at {}", kSkyplayRenderSoName);
-            return nullptr;
-        }
 
         void* lib = dlopen(kSkyplayRenderSoName, RTLD_LAZY | RTLD_LOCAL);
         if (!lib) {
