@@ -43,8 +43,6 @@ private:
     flutter::PluginRegistrar* _registrar = nullptr;
     FlutterDesktopEngineRef _engine = nullptr;
 
-    void initializeInstance(uint8_t instance);
-
     typedef void (*PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)(GLenum target, void * image);
 
     PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES;

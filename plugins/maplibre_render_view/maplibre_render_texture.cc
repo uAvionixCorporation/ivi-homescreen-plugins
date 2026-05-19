@@ -33,21 +33,13 @@ MapLibreRenderTexture::~MapLibreRenderTexture() = default;
 std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::Initialize()
 {
     auto display = _engine->view_controller->view->GetDisplay()->GetDisplay();
-    auto surface = _engine->view_controller->view->GetWindow()->GetBaseSurface();
 
-    printf("Launch OGRE Renderer\n");
-    MapLibreRender->initialize(display, surface);
+    printf("Launch MapLibre Renderer\n");
+    MapLibreRender->initialize(display);
     MapLibreRender->renderFrame();
 
-    eglImage = MapLibreRender->getMapEglImage();
+    eglImage = MapLibreRender->getEglImage();
 
-    initializeInstance();
-
-    return std::nullopt;
-}
-
-void MapLibreRenderTexture::initializeInstance()
-{
     flutter::TextureRegistrar* textureRegistrar =
         _registrar->texture_registrar();
 
@@ -106,6 +98,8 @@ void MapLibreRenderTexture::initializeInstance()
     textureRegistrar->MarkTextureFrameAvailable(glTextureId);
 
     //printf("flutter texture ID: %ld\n", flutterTextureId);
+
+    return std::nullopt;
 }
 
 maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::GetTextureHandle()
@@ -120,8 +114,7 @@ std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::RenderF
 
     MapLibreRender->renderFrame();
 
-    textureRegistrar->MarkTextureFrameAvailable(glTextureId[0]);
-    textureRegistrar->MarkTextureFrameAvailable(glTextureId[1]);
+    textureRegistrar->MarkTextureFrameAvailable(glTextureId);
 
     return std::nullopt;
 }
