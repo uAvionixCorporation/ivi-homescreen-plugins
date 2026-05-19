@@ -112,6 +112,11 @@ void PluginsApiRegisterPlugins(FlutterDesktopEngineRef engine) {
       FlutterDesktopGetPluginRegistrar(engine, ""),
       engine);
 #endif
+#if ENABLE_PLUGIN_MAPLIBRE_RENDER_VIEW
+    MapLibreRenderViewPluginTextureCApiRegisterWithRegistrar(
+        FlutterDesktopGetPluginRegistrar(engine, ""),
+        engine);
+#endif
 }
 
 void PluginsAoiPlatformViewCreate(
