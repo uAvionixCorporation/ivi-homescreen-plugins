@@ -123,6 +123,46 @@ void MapLibreApi::SetUp(
       channel.SetMessageHandler(nullptr);
     }
   }
+  {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.maplibre_renderer_view.MapLibreApi.adjustZoom" + prepended_suffix, &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_steps_arg = args.at(0);
+          if (encodable_steps_arg.IsNull()) {
+            reply(WrapError("steps_arg unexpectedly null."));
+            return;
+          }
+          const auto& steps_arg = std::get<double>(encodable_steps_arg);
+          const auto& encodable_x_arg = args.at(1);
+          if (encodable_x_arg.IsNull()) {
+            reply(WrapError("x_arg unexpectedly null."));
+            return;
+          }
+          const int64_t x_arg = encodable_x_arg.LongValue();
+          const auto& encodable_y_arg = args.at(2);
+          if (encodable_y_arg.IsNull()) {
+            reply(WrapError("y_arg unexpectedly null."));
+            return;
+          }
+          const int64_t y_arg = encodable_y_arg.LongValue();
+          std::optional<FlutterError> output = api->AdjustZoom(steps_arg, x_arg, y_arg);
+          if (output.has_value()) {
+            reply(WrapError(output.value()));
+            return;
+          }
+          EncodableList wrapped;
+          wrapped.push_back(EncodableValue());
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
 }
 
 EncodableValue MapLibreApi::WrapError(std::string_view error_message) {

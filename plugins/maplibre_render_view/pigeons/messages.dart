@@ -1,7 +1,7 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-    dartOut: 'lib/src/messages.g.dart',
+    dartOut: 'lib/src/maplibre_messages.g.dart',
     cppOptions: CppOptions(
         headerOut: 'messages.g.h',
         sourceOut: 'messages.g.cc',
@@ -14,4 +14,5 @@ abstract class MapLibreApi {
   void initialize();
   int getTextureHandle();
   void renderFrame();
+  void adjustZoom(double steps, int x, int y);
 }

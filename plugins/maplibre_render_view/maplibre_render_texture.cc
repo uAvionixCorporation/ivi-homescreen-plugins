@@ -119,4 +119,11 @@ std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::RenderF
     return std::nullopt;
 }
 
+std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::AdjustZoom(double steps, int64_t x, int64_t y)
+{
+    MapLibreRender->adjustZoom(steps, x, y);
+
+    return std::nullopt;
+}
+
 }  // namespace maplibre_render_view_plugin

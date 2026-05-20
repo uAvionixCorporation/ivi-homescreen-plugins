@@ -31,6 +31,7 @@ MapLibreRenderExports::MapLibreRenderExports(void* lib)
         PluginGetFuncAddress(lib, "initialize", &initialize);
         PluginGetFuncAddress(lib, "getEglImage", &getEglImage);
         PluginGetFuncAddress(lib, "renderFrame", &renderFrame);
+        PluginGetFuncAddress(lib, "adjustZoom", &adjustZoom);
     }
 }
 

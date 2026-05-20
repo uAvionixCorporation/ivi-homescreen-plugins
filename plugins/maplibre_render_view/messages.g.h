@@ -85,6 +85,10 @@ class MapLibreApi {
   virtual std::optional<FlutterError> Initialize() = 0;
   virtual ErrorOr<int64_t> GetTextureHandle() = 0;
   virtual std::optional<FlutterError> RenderFrame() = 0;
+  virtual std::optional<FlutterError> AdjustZoom(
+    double steps,
+    int64_t x,
+    int64_t y) = 0;
 
   // The codec used by MapLibreApi.
   static const flutter::StandardMessageCodec& GetCodec();

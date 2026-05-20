@@ -28,6 +28,7 @@ struct MapLibreRenderExports
     void  (*initialize)(void*) = nullptr;
     void* (*getEglImage)() = nullptr;
     void  (*renderFrame)() = nullptr;
+    void  (*adjustZoom)(float steps, int x, int y) = nullptr;
 };
 
 class MapLibreRender
