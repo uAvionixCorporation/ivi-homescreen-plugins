@@ -30,10 +30,9 @@ public:
     MapLibreRenderTexture(const MapLibreRenderTexture&) = delete;
     MapLibreRenderTexture& operator=(const MapLibreRenderTexture&) = delete;
 
-    std::optional<maplibre_render_view::FlutterError> Initialize() override;
-    maplibre_render_view::ErrorOr<int64_t> GetTextureHandle() override;
-    std::optional<maplibre_render_view::FlutterError> RenderFrame() override;
-    std::optional<maplibre_render_view::FlutterError> AdjustZoom(double steps, int64_t x, int64_t y) override;
+    maplibre_render_view::ErrorOr<int64_t> GetNativeDisplay() override;
+    maplibre_render_view::ErrorOr<int64_t> RegisterEglImage(int64_t egl_image) override;
+    std::optional<maplibre_render_view::FlutterError> MarkTextureAvailable() override;
 
 private:
     std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;

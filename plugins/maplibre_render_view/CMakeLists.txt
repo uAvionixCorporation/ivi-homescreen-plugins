@@ -19,7 +19,6 @@ pkg_check_modules(WAYLAND_EGL REQUIRED IMPORTED_TARGET wayland-egl)
 add_library(plugin_maplibre_render_view STATIC
         maplibre_render_view_plugin_c_api.cc
         maplibre_render_texture.cc
-        maplibre_render.cc
         messages.g.cc
 )
 

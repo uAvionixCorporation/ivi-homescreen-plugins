@@ -1,18 +1,12 @@
 
 #include "maplibre_render_texture.h"
 
-#include "maplibre_render.h"
-
 namespace maplibre_render_view_plugin {
 
 void MapLibreRenderTexture::RegisterWithRegistrar(
     flutter::PluginRegistrar* registrar,
     FlutterDesktopEngineRef engine)
 {
-    if (!MapLibreRender::IsPresent()) {
-        spdlog::error("[MapLibreRenderViewPlugin] libmaplibre-native-ivi.so missing");
-    }
-
     auto plugin = std::make_unique<MapLibreRenderTexture>(registrar, engine);
 
     MapLibreApi::SetUp(registrar->messenger(), plugin.get());
@@ -30,15 +24,16 @@ MapLibreRenderTexture::MapLibreRenderTexture(
 
 MapLibreRenderTexture::~MapLibreRenderTexture() = default;
 
-std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::Initialize()
+maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::GetNativeDisplay()
 {
     auto display = _engine->view_controller->view->GetDisplay()->GetDisplay();
 
-    printf("Launch MapLibre Renderer\n");
-    MapLibreRender->initialize(display);
-    MapLibreRender->renderFrame();
+    return (int64_t)display;
+}
 
-    eglImage = MapLibreRender->getEglImage();
+maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::RegisterEglImage(int64_t egl_image)
+{
+    eglImage = (void*)egl_image;
 
     flutter::TextureRegistrar* textureRegistrar =
         _registrar->texture_registrar();
@@ -99,29 +94,12 @@ std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::Initial
 
     //printf("flutter texture ID: %ld\n", flutterTextureId);
 
-    return std::nullopt;
-}
-
-maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::GetTextureHandle()
-{
     return flutterTextureId;
 }
 
-std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::RenderFrame()
+std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::MarkTextureAvailable()
 {
-    flutter::TextureRegistrar* textureRegistrar =
-        _registrar->texture_registrar();
-
-    MapLibreRender->renderFrame();
-
-    textureRegistrar->MarkTextureFrameAvailable(glTextureId);
-
-    return std::nullopt;
-}
-
-std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::AdjustZoom(double steps, int64_t x, int64_t y)
-{
-    MapLibreRender->adjustZoom(steps, x, y);
+    _registrar->texture_registrar()->MarkTextureFrameAvailable(glTextureId);
 
     return std::nullopt;
 }

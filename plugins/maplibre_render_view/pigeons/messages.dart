@@ -11,8 +11,7 @@ import 'package:pigeon/pigeon.dart';
 
 @HostApi()
 abstract class MapLibreApi {
-  void initialize();
-  int getTextureHandle();
-  void renderFrame();
-  void adjustZoom(double steps, int x, int y);
+  int getNativeDisplay();
+  int registerEglImage(int eglImage);
+  void markTextureAvailable();
 }
