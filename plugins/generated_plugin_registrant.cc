@@ -112,8 +112,8 @@ void PluginsApiRegisterPlugins(FlutterDesktopEngineRef engine) {
       FlutterDesktopGetPluginRegistrar(engine, ""),
       engine);
 #endif
-#if ENABLE_PLUGIN_MAPLIBRE_RENDER_VIEW
-    MapLibreRenderViewPluginTextureCApiRegisterWithRegistrar(
+#if ENABLE_PLUGIN_EGL_IMAGE_TEXTURE
+    EglImageTexturePluginTextureCApiRegisterWithRegistrar(
         FlutterDesktopGetPluginRegistrar(engine, ""),
         engine);
 #endif

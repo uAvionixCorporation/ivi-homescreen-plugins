@@ -1,5 +1,5 @@
-name: maplibre_renderer_view
-description: MapLibre Renderer View
+name: egl_image_texture
+description: EGL Image Texture
 version: 1.0.0
 publish_to: 'none'
 

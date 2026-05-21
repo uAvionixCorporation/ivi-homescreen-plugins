@@ -1,20 +1,20 @@
 
-#include "maplibre_render_texture.h"
+#include "egl_image_texture.h"
 
-namespace maplibre_render_view_plugin {
+namespace egl_image_texture_plugin {
 
-void MapLibreRenderTexture::RegisterWithRegistrar(
+void EglImageTexture::RegisterWithRegistrar(
     flutter::PluginRegistrar* registrar,
     FlutterDesktopEngineRef engine)
 {
-    auto plugin = std::make_unique<MapLibreRenderTexture>(registrar, engine);
+    auto plugin = std::make_unique<EglImageTexture>(registrar, engine);
 
-    MapLibreApi::SetUp(registrar->messenger(), plugin.get());
+    EglImageTextureApi::SetUp(registrar->messenger(), plugin.get());
 
     registrar->AddPlugin(std::move(plugin));
 }
 
-MapLibreRenderTexture::MapLibreRenderTexture(
+EglImageTexture::EglImageTexture(
     flutter::PluginRegistrar* registrar,
     FlutterDesktopEngineRef engine) :
     _registrar(registrar),
@@ -22,16 +22,16 @@ MapLibreRenderTexture::MapLibreRenderTexture(
 {
 }
 
-MapLibreRenderTexture::~MapLibreRenderTexture() = default;
+EglImageTexture::~EglImageTexture() = default;
 
-maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::GetNativeDisplay()
+egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeDisplay()
 {
     auto display = _engine->view_controller->view->GetDisplay()->GetDisplay();
 
     return (int64_t)display;
 }
 
-maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::RegisterEglImage(int64_t egl_image)
+egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t egl_image)
 {
     eglImage = (void*)egl_image;
 
@@ -97,11 +97,11 @@ maplibre_render_view::ErrorOr<int64_t> MapLibreRenderTexture::RegisterEglImage(i
     return flutterTextureId;
 }
 
-std::optional<maplibre_render_view::FlutterError> MapLibreRenderTexture::MarkTextureAvailable()
+std::optional<egl_image_texture::FlutterError> EglImageTexture::MarkTextureAvailable()
 {
     _registrar->texture_registrar()->MarkTextureFrameAvailable(glTextureId);
 
     return std::nullopt;
 }
 
-}  // namespace maplibre_render_view_plugin
+}  // namespace egl_image_texture_plugin

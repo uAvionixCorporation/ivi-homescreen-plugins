@@ -16,15 +16,15 @@
 
 pkg_check_modules(WAYLAND_EGL REQUIRED IMPORTED_TARGET wayland-egl)
 
-add_library(plugin_maplibre_render_view STATIC
-        maplibre_render_view_plugin_c_api.cc
-        maplibre_render_texture.cc
+add_library(plugin_egl_image_texture STATIC
+        egl_image_texture_plugin_c_api.cc
+        egl_image_texture.cc
         messages.g.cc
 )
 
-target_include_directories(plugin_maplibre_render_view PRIVATE include ${PROJECT_BINARY_DIR})
+target_include_directories(plugin_egl_image_texture PRIVATE include ${PROJECT_BINARY_DIR})
 
-target_link_libraries(plugin_maplibre_render_view PUBLIC
+target_link_libraries(plugin_egl_image_texture PUBLIC
         flutter
         platform_homescreen
         PkgConfig::WAYLAND_EGL

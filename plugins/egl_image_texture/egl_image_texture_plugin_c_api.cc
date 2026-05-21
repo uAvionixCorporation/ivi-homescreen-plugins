@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include "include/maplibre_render_view/maplibre_render_view_plugin_c_api.h"
+#include "include/egl_image_texture/egl_image_texture_plugin_c_api.h"
 
 #include <flutter/plugin_registrar.h>
 
-#include "maplibre_render_texture.h"
+#include "egl_image_texture.h"
 
-void MapLibreRenderViewPluginTextureCApiRegisterWithRegistrar(
+void EglImageTexturePluginTextureCApiRegisterWithRegistrar(
     FlutterDesktopPluginRegistrar* registrar,
     FlutterDesktopEngineRef engine)
 {
-    maplibre_render_view_plugin::MapLibreRenderTexture::RegisterWithRegistrar(
+    egl_image_texture_plugin::EglImageTexture::RegisterWithRegistrar(
         flutter::PluginRegistrarManager::GetInstance()
             ->GetRegistrar<flutter::PluginRegistrar>(registrar),
         engine);

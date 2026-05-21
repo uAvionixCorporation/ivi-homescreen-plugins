@@ -133,7 +133,7 @@ PLUGIN_OPTION(webview_flutter_view "Includes WebView View Plugin" OFF)
 
 PLUGIN_OPTION(skyplay_render_view "Includes Skyplay Render View plugin" ON)
 
-PLUGIN_OPTION(maplibre_render_view "Includes MapLibre Render View plugin" ON)
+PLUGIN_OPTION(egl_image_texture "Includes EGL Image Texture plugin" ON)
 
 #
 # Configuration File

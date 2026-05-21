@@ -37,11 +37,11 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-class MapLibreApi {
-  /// Constructor for [MapLibreApi].  The [binaryMessenger] named argument is
+class EglImageTextureApi {
+  /// Constructor for [EglImageTextureApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapLibreApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  EglImageTextureApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
         pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
@@ -51,7 +51,7 @@ class MapLibreApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<int> getNativeDisplay() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.maplibre_renderer_view.MapLibreApi.getNativeDisplay$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.egl_image_texture.EglImageTextureApi.getNativeDisplay$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -78,7 +78,7 @@ class MapLibreApi {
   }
 
   Future<int> registerEglImage(int eglImage) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.maplibre_renderer_view.MapLibreApi.registerEglImage$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.egl_image_texture.EglImageTextureApi.registerEglImage$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -105,7 +105,7 @@ class MapLibreApi {
   }
 
   Future<void> markTextureAvailable() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.maplibre_renderer_view.MapLibreApi.markTextureAvailable$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.egl_image_texture.EglImageTextureApi.markTextureAvailable$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,

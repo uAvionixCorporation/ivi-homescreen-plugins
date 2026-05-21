@@ -134,9 +134,9 @@
 #include "skyplay_render_view/include/skyplay_render_view/skyplay_render_view_plugin_c_api.h"
 #endif
 
-#cmakedefine01 ENABLE_PLUGIN_MAPLIBRE_RENDER_VIEW
-#if ENABLE_PLUGIN_MAPLIBRE_RENDER_VIEW
-#include "maplibre_render_view/include/maplibre_render_view/maplibre_render_view_plugin_c_api.h"
+#cmakedefine01 ENABLE_PLUGIN_EGL_IMAGE_TEXTURE
+#if ENABLE_PLUGIN_EGL_IMAGE_TEXTURE
+#include "egl_image_texture/include/egl_image_texture/egl_image_texture_plugin_c_api.h"
 #endif
 
 #endif //CONFIG_PLUGINS_H_

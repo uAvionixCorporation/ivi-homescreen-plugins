@@ -1,16 +1,16 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-    dartOut: 'lib/src/maplibre_messages.g.dart',
+    dartOut: 'lib/src/egl_image_texture_messages.g.dart',
     cppOptions: CppOptions(
         headerOut: 'messages.g.h',
         sourceOut: 'messages.g.cc',
-        namespace: 'maplibre_render_view'
+        namespace: 'egl_image_texture'
     ),
 ))
 
 @HostApi()
-abstract class MapLibreApi {
+abstract class EglImageTextureApi {
   int getNativeDisplay();
   int registerEglImage(int eglImage);
   void markTextureAvailable();

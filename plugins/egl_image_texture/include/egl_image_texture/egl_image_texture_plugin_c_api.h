@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef FLUTTER_PLUGIN_MAPLIBRE_RENDER_VIEW_PLUGIN_C_API_H_
-#define FLUTTER_PLUGIN_MAPLIBRE_RENDER_VIEW_PLUGIN_C_API_H_
+#ifndef FLUTTER_PLUGIN_EGL_IMAGE_TEXTURE_PLUGIN_C_API_H_
+#define FLUTTER_PLUGIN_EGL_IMAGE_TEXTURE_PLUGIN_C_API_H_
 
 #include <flutter_plugin_registrar.h>
 #include "flutter_homescreen.h"
@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void MapLibreRenderViewPluginTextureCApiRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void EglImageTexturePluginTextureCApiRegisterWithRegistrar(
     FlutterDesktopPluginRegistrar* registrar,
     FlutterDesktopEngineRef engine);
 
@@ -42,4 +42,4 @@ FLUTTER_PLUGIN_EXPORT void MapLibreRenderViewPluginTextureCApiRegisterWithRegist
 }  // extern "C"
 #endif
 
-#endif  // FLUTTER_PLUGIN_MAPLIBRE_RENDER_VIEW_PLUGIN_C_API_H_
+#endif  // FLUTTER_PLUGIN_EGL_IMAGE_TEXTURE_PLUGIN_C_API_H_

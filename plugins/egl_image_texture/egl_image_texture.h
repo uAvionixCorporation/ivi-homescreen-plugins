@@ -12,27 +12,27 @@
 
 #include "messages.g.h"
 
-namespace maplibre_render_view_plugin {
+namespace egl_image_texture_plugin {
 
-class MapLibreRenderTexture final : public flutter::Plugin, public maplibre_render_view::MapLibreApi {
+class EglImageTexture final : public flutter::Plugin, public egl_image_texture::EglImageTextureApi {
 public:
     static void RegisterWithRegistrar(
         flutter::PluginRegistrar* registrar,
         FlutterDesktopEngineRef engine);
 
-    explicit MapLibreRenderTexture(
+    explicit EglImageTexture(
         flutter::PluginRegistrar* registrar,
         FlutterDesktopEngineRef engine);
 
-    ~MapLibreRenderTexture() override;
+    ~EglImageTexture() override;
 
     // Disallow copy and assign.
-    MapLibreRenderTexture(const MapLibreRenderTexture&) = delete;
-    MapLibreRenderTexture& operator=(const MapLibreRenderTexture&) = delete;
+    EglImageTexture(const EglImageTexture&) = delete;
+    EglImageTexture& operator=(const EglImageTexture&) = delete;
 
-    maplibre_render_view::ErrorOr<int64_t> GetNativeDisplay() override;
-    maplibre_render_view::ErrorOr<int64_t> RegisterEglImage(int64_t egl_image) override;
-    std::optional<maplibre_render_view::FlutterError> MarkTextureAvailable() override;
+    egl_image_texture::ErrorOr<int64_t> GetNativeDisplay() override;
+    egl_image_texture::ErrorOr<int64_t> RegisterEglImage(int64_t egl_image) override;
+    std::optional<egl_image_texture::FlutterError> MarkTextureAvailable() override;
 
 private:
     std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;
@@ -48,4 +48,4 @@ private:
     PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES;
 };
 
-}  // namespace maplibre_render_view_plugin
+}  // namespace egl_image_texture_plugin
