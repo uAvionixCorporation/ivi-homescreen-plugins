@@ -31,6 +31,13 @@ egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeDisplay()
     return (int64_t)display;
 }
 
+egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeSurface()
+{
+    auto surface = _engine->view_controller->view->GetWindow()->GetBaseSurface();
+
+    return (int64_t)surface;
+}
+
 egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t egl_image)
 {
     eglImage = (void*)egl_image;

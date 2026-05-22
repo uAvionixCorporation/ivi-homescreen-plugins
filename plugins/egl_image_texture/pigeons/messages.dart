@@ -12,6 +12,7 @@ import 'package:pigeon/pigeon.dart';
 @HostApi()
 abstract class EglImageTextureApi {
   int getNativeDisplay();
+  int getNativeSurface();
   int registerEglImage(int eglImage);
   void markTextureAvailable();
 }
