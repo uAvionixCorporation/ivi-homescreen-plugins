@@ -107,11 +107,6 @@ void PluginsApiRegisterPlugins(FlutterDesktopEngineRef engine) {
   WebrtcPluginCApiRegisterWithRegistrar(
       FlutterDesktopGetPluginRegistrar(engine, ""));
 #endif
-#if ENABLE_PLUGIN_SKYPLAY_RENDER_VIEW
-  SkyplayRenderViewPluginTextureCApiRegisterWithRegistrar(
-      FlutterDesktopGetPluginRegistrar(engine, ""),
-      engine);
-#endif
 #if ENABLE_PLUGIN_EGL_IMAGE_TEXTURE
     EglImageTexturePluginTextureCApiRegisterWithRegistrar(
         FlutterDesktopGetPluginRegistrar(engine, ""),

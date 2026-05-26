@@ -131,8 +131,6 @@ PLUGIN_OPTION(nav_render_view "Include Navigation Render View plugin" OFF)
 
 PLUGIN_OPTION(webview_flutter_view "Includes WebView View Plugin" OFF)
 
-PLUGIN_OPTION(skyplay_render_view "Includes Skyplay Render View plugin" ON)
-
 PLUGIN_OPTION(egl_image_texture "Includes EGL Image Texture plugin" ON)
 
 #
