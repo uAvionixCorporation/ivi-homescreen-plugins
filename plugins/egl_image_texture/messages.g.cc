@@ -131,11 +131,46 @@ void EglImageTextureApi::SetUp(
     }
   }
   {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.egl_image_texture.EglImageTextureApi.getFlutterTextureId" + prepended_suffix, &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_handle_arg = args.at(0);
+          if (encodable_handle_arg.IsNull()) {
+            reply(WrapError("handle_arg unexpectedly null."));
+            return;
+          }
+          const int64_t handle_arg = encodable_handle_arg.LongValue();
+          ErrorOr<int64_t> output = api->GetFlutterTextureId(handle_arg);
+          if (output.has_error()) {
+            reply(WrapError(output.error()));
+            return;
+          }
+          EncodableList wrapped;
+          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
     BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.egl_image_texture.EglImageTextureApi.markTextureAvailable" + prepended_suffix, &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
         try {
-          std::optional<FlutterError> output = api->MarkTextureAvailable();
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_handle_arg = args.at(0);
+          if (encodable_handle_arg.IsNull()) {
+            reply(WrapError("handle_arg unexpectedly null."));
+            return;
+          }
+          const int64_t handle_arg = encodable_handle_arg.LongValue();
+          std::optional<FlutterError> output = api->MarkTextureAvailable(handle_arg);
           if (output.has_value()) {
             reply(WrapError(output.value()));
             return;

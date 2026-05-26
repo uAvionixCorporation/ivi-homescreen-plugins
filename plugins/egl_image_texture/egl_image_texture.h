@@ -33,16 +33,28 @@ public:
     egl_image_texture::ErrorOr<int64_t> GetNativeDisplay() override;
     egl_image_texture::ErrorOr<int64_t> GetNativeSurface() override;
     egl_image_texture::ErrorOr<int64_t> RegisterEglImage(int64_t egl_image) override;
-    std::optional<egl_image_texture::FlutterError> MarkTextureAvailable() override;
+    egl_image_texture::ErrorOr<int64_t> GetFlutterTextureId(int64_t handle) override;
+    std::optional<egl_image_texture::FlutterError> MarkTextureAvailable(int64_t handle) override;
 
 private:
-    std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;
-    int64_t flutterTextureId;
-    GLuint glTextureId;
-    FlutterDesktopGpuSurfaceDescriptor surfaceDescriptor;
-    EGLImage eglImage;
+    class Handle
+    {
+    public:
+        std::unique_ptr<flutter::GpuSurfaceTexture> gpuSurfaceTexture;
+        int64_t flutterTextureId;
+        GLuint glTextureId;
+        FlutterDesktopGpuSurfaceDescriptor surfaceDescriptor;
+        EGLImage eglImage;
+    };
+
+    static constexpr uint32_t MAX_ITEMS = 2;
+
+    std::unique_ptr<Handle> registry[MAX_ITEMS];
+
     flutter::PluginRegistrar* _registrar = nullptr;
     FlutterDesktopEngineRef _engine = nullptr;
+
+    int index;
 
     typedef void (*PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)(GLenum target, void * image);
 

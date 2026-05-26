@@ -18,7 +18,8 @@ EglImageTexture::EglImageTexture(
     flutter::PluginRegistrar* registrar,
     FlutterDesktopEngineRef engine) :
     _registrar(registrar),
-    _engine(engine)
+    _engine(engine),
+    index(0)
 {
 }
 
@@ -40,18 +41,19 @@ egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeSurface()
 
 egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t egl_image)
 {
-    eglImage = (void*)egl_image;
+    auto handle = std::make_unique<Handle>();
+
+    handle->eglImage = (void*)egl_image;
 
     flutter::TextureRegistrar* textureRegistrar =
         _registrar->texture_registrar();
 
     textureRegistrar->TextureMakeCurrent();
 
-    glGenTextures(1, &glTextureId);
+    glGenTextures(1, &handle->glTextureId);
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
-    glBindTexture(GL_TEXTURE_2D, glTextureId);
-    printf("GL Texture Initialized: ID %u\n", glTextureId);
+    glBindTexture(GL_TEXTURE_2D, handle->glTextureId);
 
     glEGLImageTargetTexture2DOES =
         (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
@@ -62,7 +64,7 @@ egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t eg
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     if (glEGLImageTargetTexture2DOES) {
-        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, handle->eglImage);
     }
     else
     {
@@ -71,9 +73,9 @@ egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t eg
 
     textureRegistrar->TextureClearCurrent();
 
-    surfaceDescriptor = {
+    handle->surfaceDescriptor = {
         .struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor),
-        .handle = &glTextureId,
+        .handle = &handle->glTextureId,
         .width = static_cast<size_t>(1920),
         .height = static_cast<size_t>(1080),
         .visible_width = static_cast<size_t>(1920),
@@ -83,30 +85,34 @@ egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t eg
         .release_context = this
     };
 
-    gpuSurfaceTexture =
+    handle->gpuSurfaceTexture =
         std::make_unique<flutter::GpuSurfaceTexture>(
             kFlutterDesktopGpuSurfaceTypeGlTexture2D,
             [&](size_t width, size_t height) -> const FlutterDesktopGpuSurfaceDescriptor*
             {
                 (void)width;
                 (void)height;
-                return &surfaceDescriptor;
+                return &handle->surfaceDescriptor;
             }
         );
 
-    flutter::TextureVariant textureVariant = *gpuSurfaceTexture;
+    flutter::TextureVariant textureVariant = *handle->gpuSurfaceTexture;
 
-    flutterTextureId = textureRegistrar->RegisterTexture(&textureVariant);
-    textureRegistrar->MarkTextureFrameAvailable(glTextureId);
+    handle->flutterTextureId = textureRegistrar->RegisterTexture(&textureVariant);
+    textureRegistrar->MarkTextureFrameAvailable(handle->glTextureId);
 
-    //printf("flutter texture ID: %ld\n", flutterTextureId);
-
-    return flutterTextureId;
+    registry[index] = std::move(handle);
+    return index++;
 }
 
-std::optional<egl_image_texture::FlutterError> EglImageTexture::MarkTextureAvailable()
+egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetFlutterTextureId(int64_t handle)
 {
-    _registrar->texture_registrar()->MarkTextureFrameAvailable(glTextureId);
+    return registry[handle]->flutterTextureId;
+}
+
+std::optional<egl_image_texture::FlutterError> EglImageTexture::MarkTextureAvailable(int64_t handle)
+{
+    _registrar->texture_registrar()->MarkTextureFrameAvailable(registry[handle]->glTextureId);
 
     return std::nullopt;
 }

@@ -14,5 +14,6 @@ abstract class EglImageTextureApi {
   int getNativeDisplay();
   int getNativeSurface();
   int registerEglImage(int eglImage);
-  void markTextureAvailable();
+  int getFlutterTextureId(int handle);
+  void markTextureAvailable(int handle);
 }
