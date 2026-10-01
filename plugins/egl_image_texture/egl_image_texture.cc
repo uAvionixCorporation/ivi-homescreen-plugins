@@ -1,6 +1,8 @@
 
 #include "egl_image_texture.h"
 
+#include <backend/wayland_egl/wayland_egl.h>
+
 namespace egl_image_texture_plugin {
 
 void EglImageTexture::RegisterWithRegistrar(
@@ -37,6 +39,24 @@ egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeSurface()
     auto surface = _engine->view_controller->view->GetWindow()->GetBaseSurface();
 
     return (int64_t)surface;
+}
+
+egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetEglDisplay()
+{
+#if BUILD_BACKEND_WAYLAND_EGL
+    // The embedder's own EGLDisplay, already resolved and initialized, so
+    // callers (e.g. synthetic-vision-engine) don't need to know anything
+    // about the windowing system behind it.
+    auto backend = _engine->view_controller->view->GetBackend();
+    // FlutterView::GetBackend() reinterpret_casts WaylandEglBackend* to
+    // Backend* without adjusting for the Egl base, so undo it the same way —
+    // a static_cast here would apply a base-offset and yield a bad pointer.
+    auto display = reinterpret_cast<WaylandEglBackend*>(backend)->GetDisplay();
+
+    return (int64_t)display;
+#else
+    return egl_image_texture::FlutterError("unsupported", "GetEglDisplay requires the wayland_egl backend");
+#endif
 }
 
 egl_image_texture::ErrorOr<int64_t> EglImageTexture::RegisterEglImage(int64_t egl_image)
