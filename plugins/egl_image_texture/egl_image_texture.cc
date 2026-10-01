@@ -27,20 +27,6 @@ EglImageTexture::EglImageTexture(
 
 EglImageTexture::~EglImageTexture() = default;
 
-egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeDisplay()
-{
-    auto display = _engine->view_controller->view->GetDisplay()->GetDisplay();
-
-    return (int64_t)display;
-}
-
-egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetNativeSurface()
-{
-    auto surface = _engine->view_controller->view->GetWindow()->GetBaseSurface();
-
-    return (int64_t)surface;
-}
-
 egl_image_texture::ErrorOr<int64_t> EglImageTexture::GetEglDisplay()
 {
 #if BUILD_BACKEND_WAYLAND_EGL

@@ -30,8 +30,6 @@ public:
     EglImageTexture(const EglImageTexture&) = delete;
     EglImageTexture& operator=(const EglImageTexture&) = delete;
 
-    egl_image_texture::ErrorOr<int64_t> GetNativeDisplay() override;
-    egl_image_texture::ErrorOr<int64_t> GetNativeSurface() override;
     egl_image_texture::ErrorOr<int64_t> GetEglDisplay() override;
     egl_image_texture::ErrorOr<int64_t> RegisterEglImage(int64_t egl_image) override;
     egl_image_texture::ErrorOr<int64_t> GetFlutterTextureId(int64_t handle) override;

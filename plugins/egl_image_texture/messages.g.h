@@ -82,8 +82,6 @@ class EglImageTextureApi {
   EglImageTextureApi(const EglImageTextureApi&) = delete;
   EglImageTextureApi& operator=(const EglImageTextureApi&) = delete;
   virtual ~EglImageTextureApi() {}
-  virtual ErrorOr<int64_t> GetNativeDisplay() = 0;
-  virtual ErrorOr<int64_t> GetNativeSurface() = 0;
   virtual ErrorOr<int64_t> GetEglDisplay() = 0;
   virtual ErrorOr<int64_t> RegisterEglImage(int64_t egl_image) = 0;
   virtual ErrorOr<int64_t> GetFlutterTextureId(int64_t handle) = 0;
